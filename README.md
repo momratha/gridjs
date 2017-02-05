@@ -4,26 +4,26 @@ Followin is the setting up the grid Struct
 ******************************
 ******************************/
 var GridStruct = {
-		colLayout: [
-			{"name":"c", "caption":"Year"},
-			{"name":"a", "caption":"Title"},
-			{"name":"d", "caption":"Address"}
-		],
-		dataForBinding: [
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "h":9}
-		], //json object
+	colLayout: [
+		{"name":"c", "caption":"Year"},
+		{"name":"a", "caption":"Title"},
+		{"name":"d", "caption":"Address"}
+	],
+	dataForBinding: [
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
+		{"a":1, "b":2, "c":3, "d":4, "e":5, "h":9}
+	], //json object
         resultPerShow: thisApp.prop.resultPerShow, 
         listableFunc: thisApp.prop.listableFunc,
         appendElementID: "myGrid",
