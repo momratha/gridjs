@@ -1,9 +1,7 @@
-/*****************************
-******************************
+
 Followin is the setting up the grid Struct
-******************************
-******************************/
-var GridStruct = {
+
+	var GridStruct = {
 		colLayout: [
 			{"name":"c", "caption":"Year"},
 			{"name":"a", "caption":"Title"},
