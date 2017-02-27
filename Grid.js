@@ -84,13 +84,23 @@ this.callback_ShowDeleteButton = function( data ) {
 var Framework = {
     prop: { 
         developer: false,
-        Empty: function(value) {
-            if(value) {
-                return true;
-            }
-            return false;
+    },
+
+    isEmpty: function(value) {
+        if(value) {
+            return true;
         }
+        return false;
+    },
+
+    IsBoolean: function(value) {
+        if(typeof(value) === "boolean") {
+            return true;
+        }
+        return false;
     }
+
+
 }
 
 var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
@@ -98,7 +108,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         console.log("Grid-Control(INFO): creating new Grid.js Control");
     }
     
-	if (Framework.prop.Empty(GridStruct)) {
+	if (Framework.isEmpty(GridStruct)) {
 		if (Framework.prop.developer) {
 			console.log('Grid-Control(ERROR): required argument GridStruct is null');
 			Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempted to create Grid control failed, it requires a GridStruct as an argument to initialise.', modal:false, width:400, height:300});
@@ -112,7 +122,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		this._nextDataCount = GridStruct.resultPerShow;// START NUMBER
         
 		var error = true;
-		if ((!Framework.prop.Empty(GridStruct.colLayout)) && (typeof(GridStruct.colLayout) == 'object') && (typeof(GridStruct.colLayout.length) != 'undefined')) {
+		if ((!Framework.isEmpty(GridStruct.colLayout)) && (typeof(GridStruct.colLayout) == 'object') && (typeof(GridStruct.colLayout.length) != 'undefined')) {
 			for (var i = 0; i < GridStruct.colLayout.length; i++) {
 				this.ColDetails._nameList.push(GridStruct.colLayout[i].name);
 				this.ColDetails._captionList.push(GridStruct.colLayout[i].caption);
@@ -131,41 +141,41 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         
         this._elementID = GridStruct.appendElementID;
         
-        if (Framework.prop.Empty(callbackthisApp._grid)) callbackthisApp._grid = [];
+        if (Framework.isEmpty(callbackthisApp._grid)) callbackthisApp._grid = [];
 		
         callbackthisApp._grid[this._elementID] = this;
         
         this._storeData = [{}]; // create this var in the grid 
         this._showCheckbox = null;
         this._showDeleteButton = null;
-        this.recordOffSet = (Framework.prop.Empty(GridStruct.recordOffSet)) ? 5 : GridStruct.recordOffSet;
-        this.resultPerShow = (Framework.prop.Empty(GridStruct.resultPerShow)) ? 10 : GridStruct.resultPerShow;
-        this.listableServlet = (Framework.prop.Empty(GridStruct.listableServlet)) ? callbackthisApp.prop.listableServlet : GridStruct.listableServlet;        
-        this.listableFunc = (Framework.prop.Empty(GridStruct.listableFunc)) ? callbackthisApp.prop.listableFunc : GridStruct.listableFunc;        
+        this.recordOffSet = (Framework.isEmpty(GridStruct.recordOffSet)) ? 5 : GridStruct.recordOffSet;
+        this.resultPerShow = (Framework.isEmpty(GridStruct.resultPerShow)) ? 10 : GridStruct.resultPerShow;
+        this.listableServlet = (Framework.isEmpty(GridStruct.listableServlet)) ? callbackthisApp.prop.listableServlet : GridStruct.listableServlet;        
+        this.listableFunc = (Framework.isEmpty(GridStruct.listableFunc)) ? callbackthisApp.prop.listableFunc : GridStruct.listableFunc;        
 		this.tblHeaders = this.ColDetails._captionList; // array
 		this.tblDisplayHeaders = this.ColDetails._nameList; // array
 		this.tblContent = GridStruct.dataForBinding; //object
-        this._divClasName = (Framework.prop.Empty(GridStruct.styleDiv)) ? "divScroll" : GridStruct.styleDiv;
+        this._divClasName = (Framework.isEmpty(GridStruct.styleDiv)) ? "divScroll" : GridStruct.styleDiv;
 		this._tableHeaderColumnHTML = '';
 		this._row = '';
 		this._grid = '';
 		this.enableScrolling = GridStruct.scroll;		
-		this._tblClassName = (Framework.prop.Empty(GridStruct.styleTBL)) ? " table tblstyle table-hover grid" : GridStruct.styleTBL;//tblstyle
-		this._oddClassRow = (Framework.prop.Empty(GridStruct.styleOddRow)) ? "" : GridStruct.styleOddRow;//odd
-		this._evenClassRow = (Framework.prop.Empty(GridStruct.styleEvenRow)) ? "" : GridStruct.styleEvenRow;//even
+		this._tblClassName = (Framework.isEmpty(GridStruct.styleTBL)) ? " table tblstyle table-hover grid" : GridStruct.styleTBL;//tblstyle
+		this._oddClassRow = (Framework.isEmpty(GridStruct.styleOddRow)) ? "" : GridStruct.styleOddRow;//odd
+		this._evenClassRow = (Framework.isEmpty(GridStruct.styleEvenRow)) ? "" : GridStruct.styleEvenRow;//even
 		this._isOddOrEven = true;
-        this.tblDivBK =  (Framework.prop.Empty(GridStruct.styleTBLDiv)) ? "tblDivBK" : GridStruct.styleTBLDiv;//tblstyle
-		this._thClassName = (Framework.prop.Empty(GridStruct.styleTh)) ? "header" : GridStruct.styleTh;
-        this._checkBox = (Framework.prop.Empty(GridStruct.showCheckBox)) ? "" : GridStruct.showCheckBox;
-        this._deleteButton = (Framework.prop.Empty(GridStruct.deleteButton)) ? "" : GridStruct.deleteButton;    
+        this.tblDivBK =  (Framework.isEmpty(GridStruct.styleTBLDiv)) ? "tblDivBK" : GridStruct.styleTBLDiv;//tblstyle
+		this._thClassName = (Framework.isEmpty(GridStruct.styleTh)) ? "header" : GridStruct.styleTh;
+        this._checkBox = (Framework.isEmpty(GridStruct.showCheckBox)) ? "" : GridStruct.showCheckBox;
+        this._deleteButton = (Framework.isEmpty(GridStruct.deleteButton)) ? "" : GridStruct.deleteButton;    
         var divObj = $(callbackthisApp.prop.hWnd + "#" + this._elementID );
         var styleString = '';
 		
-        if (!Framework.prop.Empty(GridStruct.gridHeight)) {
+        if (!Framework.isEmpty(GridStruct.gridHeight)) {
            styleString = ' height: ' + GridStruct.gridHeight + ' !important;';
         }
         
-        if (!Framework.prop.Empty(GridStruct.gridWidth)) {
+        if (!Framework.isEmpty(GridStruct.gridWidth)) {
             styleString += ' width: ' + GridStruct.gridWidth + ' !important;';
         }
 		
@@ -177,11 +187,11 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
             this._tableHeaderColumnHTML += "<th>" + this.tblHeaders[i] + "<div>" + this.tblHeaders[i] + "</div>";
 		} 
         
-        if (!Framework.prop.Empty(this._checkBox)) {
+        if (!Framework.isEmpty(this._checkBox)) {
            this._tableHeaderColumnHTML += "<th class='_GridCheckBox'> <div>  &nbsp;<input type ='checkbox'  id='headercheckbox' name='checkbox[]' ></div></th>";
         } 
                 
-        if (!Framework.prop.Empty(this._deleteButton)) {
+        if (!Framework.isEmpty(this._deleteButton)) {
            this._tableHeaderColumnHTML +=  "<th class='_GridDeleteBox'> <div> &nbsp;<button class='btn btn-danger btn-xs' type='button'  disabled><i class='glyphicon glyphicon-remove'></i></button></div></th>"; 
         }
         
@@ -207,11 +217,11 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 					row += "<td>" + tblContent[key][prop] + "</td>";
 				}
                 
-                if (!Framework.prop.Empty(this._checkBox)) {
+                if (!Framework.isEmpty(this._checkBox)) {
 				    row += "<td class='_GridCheckBox'><input type ='checkbox'  name='checkbox[]'></td>";
                 } 
                 
-                if (!Framework.prop.Empty(this._deleteButton)) {
+                if (!Framework.isEmpty(this._deleteButton)) {
                     row += "<td class='_GridDeleteBox'><button class='btn btn-danger btn-xs' type='button'><i class='glyphicon glyphicon-remove'></i></button></td>"; 
                 }
                 
@@ -301,7 +311,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         
         // method for set the row hide and show 
         this.ShowCheckbox = function(arg) {
-            if (StaticLib.IsBoolean(arg)) {
+            if (Framework.IsBoolean(arg)) {
                 this._showCheckbox = arg;
                 var table = $(callbackthisApp.prop.hWnd + "#" + this._elementID + " table");
                 if (arg) {
@@ -317,7 +327,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         };
         
         this.ShowDeletebox = function(arg) {
-            if (StaticLib.IsBoolean(arg)) {
+            if (Framework.IsBoolean(arg)) {
                 this._showDeleteButton = arg;
                 var table = $(callbackthisApp.prop.hWnd + "#" +  this._elementID + " table");
                 if (arg) {
@@ -362,7 +372,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 			// add onclick to tr
 			var rows = table.children('tr'); // or table.getElementsByTagName("tr");
 			
-			if (Framework.prop.Empty(rows)) {
+			if (Framework.isEmpty(rows)) {
 				if (Framework.prop.developer) {
 					console.log('Grid-Control(ERROR): rows is null, quitting before we bind events to the rows');
 				}
@@ -403,7 +413,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 			// add onclick to tr
 			var rows = table.children('tr'); // or table.getElementsByTagName("tr");
 			
-			if (Framework.prop.Empty(rows)) {
+			if (Framework.isEmpty(rows)) {
 				if (Framework.prop.developer) {
 					console.log('Grid-Control(ERROR): rows is null, quitting before we bind events to the rows');
 				}
@@ -472,7 +482,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		};
         
         this.Restore = function(self) {
-            if (!Framework.prop.Empty(this._checkBox)) {
+            if (!Framework.isEmpty(this._checkBox)) {
 				self.BindOnDoubleClickEventToEachRow(self._elementID);
             } else {
                self.BindOnClickEventToEachRow(self._elementID);
@@ -495,7 +505,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 
                         //Get the parent container
                         var element = $(obj).parent()[0];                    
-                        if  (Framework.prop.Empty(element)) return;
+                        if  (Framework.isEmpty(element)) return;
 						
                         var elementID = element.id;
                         var thisApp = callbackthisApp._grid[elementID];
@@ -537,7 +547,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
             callbackthisApp = this;
             var thisApp = callbackthisApp._grid[elementID];
             
-            if ((Framework.prop.Empty(data)) || (data.length <= 0)) {
+            if ((Framework.isEmpty(data)) || (data.length <= 0)) {
                 if (Framework.prop.developer) {
                     console.log("Data get back from GetAPI is empty");
                 }
@@ -551,12 +561,12 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
                 thisApp._storeData = thisApp._storeData.concat(data);
                 var tblString = thisApp._BuildTableRows(data);  
 				thisApp.AppendRows(tblString);
-                if (!Framework.prop.Empty(thisApp._checkBox)) {
+                if (!Framework.isEmpty(thisApp._checkBox)) {
                     thisApp.BindOnDoubleClickEventToEachRow(thisApp._elementID); 
-                    if (!Framework.prop.Empty(thisApp._showDeleteButton)) {
+                    if (!Framework.isEmpty(thisApp._showDeleteButton)) {
                         thisApp.ShowDeletebox(thisApp._showDeleteButton);
                     }
-                    if (!Framework.prop.Empty(thisApp._showCheckbox)) {
+                    if (!Framework.isEmpty(thisApp._showCheckbox)) {
                         thisApp.ShowCheckbox(thisApp._showCheckbox);
                     }
                 } else {
