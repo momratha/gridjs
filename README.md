@@ -12,5 +12,5 @@ user can easily select or manage how data should be display.
 ## Requirement
 
 ```bash
-This Library required jquery to be include.
+This Library required jquery to be included.
 ```
