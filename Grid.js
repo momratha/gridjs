@@ -1,79 +1,3 @@
-/*****************************
-******************************
-Followin is the setting up the grid Struct
-******************************
-******************************
-var GridStruct = {
-		colLayout: [
-			{"name":"c", "caption":"Year"},
-			{"name":"a", "caption":"Title"},
-			{"name":"d", "caption":"Address"}
-		],
-		dataForBinding: [
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "f":6},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "g":8},
-			{"a":1, "b":2, "c":3, "d":4, "e":5, "h":9}
-		], //json object
-        resultPerShow: thisApp.prop.resultPerShow, 
-        listableFunc: thisApp.prop.listableFunc,
-        appendElementID: "myGrid",
-        styleOddRow: "", // class name
-        styleEvenRow: "", // class name
-        styleTBL: "", // class name
-        styleTh: "tblHeader", // class name
-        styleDiv:"ScrollTable", /class name
-        scroll: true,
-        gridWidth: "100%",
-        gridHeight: "240px",
-        showCheckBox: true,
-        deleteButton: "callback_ShowDeleteButton"
-        recordPerShow:10,
-        recordOffSet:5
-};
-*****************************************
-*****************************************
-Following is the usage of the Grid control
-*****************************************
-// START DEBUG CODE
-var gridControl = new Grid(GridSetting, "callback_returnData", thisApp); 
-gridControl.ShowCheckbox(false);
-gridControl.ShowCheckbox(true);
-gridControl.ShowDeletebox(false);
-gridControl.ShowDeletebox(true);
-
-//GridStruct - A GridStruct objects which contains settings used by the Grid
-//"call_backOnClick" - A String describing which method to execute using data from the row you clicked
-//thisApp - The App that this grid is being created within
-
-var call_backOnClick = function (data, type) {
-    if ( type =="DoubleClick") {
-        console.log("This was the callback specified above, it will be called when that completes")
-        alert(JSON.stringify (data));
-    }
-
-    if ( type =="Click") {
-        console.log("This was the callback specified above, it will be called when that completes")
-        alert(JSON.stringify (data));
-    }
-};
-
-this.callback_ShowDeleteButton = function( data ) {
-        alert("data return number : " + data.length + "return from delete button " + JSON.stringify (data));
-};
-// END DEBUG CODE
-*******************************************
-******************************************
- */
  /*************************required  jquery lib to work********/
 /******************************************
 *******************************************
@@ -83,14 +7,14 @@ this.callback_ShowDeleteButton = function( data ) {
 *******************************************/
 var Framework = {
     prop: { 
-        developer: false,
+        developer: true,
     },
 
     isEmpty: function(value) {
         if(value) {
-            return true;
+            return false;
         }
-        return false;
+        return true;
     },
 
     IsBoolean: function(value) {
@@ -98,8 +22,30 @@ var Framework = {
             return true;
         }
         return false;
-    }
+    },
 
+    UI: {
+    	MsgBox:function(msg) {
+    		alert(msg);
+	    }
+    },
+
+    API: {
+        getData: function(url, parameter, callBackFunction, thisApp) {
+          //GetAPI(thisApp.listableServlet, thisApp.listableFunc, callbackthisApp, "callback_GetNextList", {"Start": thisApp._nextDataCount, "ResultPerShow": thisApp.resultPerShow});
+            $.ajax({
+                method: "POST",
+                url: url,
+                data: parameter,
+                dataType:"json"
+                })
+                .done(function( msg ) {
+                    if (msg) {
+                        thisApp[callBackFunction](msg);
+                    }
+            });
+        }
+    }
 
 }
 
@@ -111,7 +57,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 	if (Framework.isEmpty(GridStruct)) {
 		if (Framework.prop.developer) {
 			console.log('Grid-Control(ERROR): required argument GridStruct is null');
-			Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempted to create Grid control failed, it requires a GridStruct as an argument to initialise.', modal:false, width:400, height:300});
+			Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempted to create Grid control failed, it requires a GridStruct as an argument to initialise.', modal:false, width:400, height:300");
 		}
 		
 		return null;
@@ -133,7 +79,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		if (error) {
 			if (Framework.prop.developer) {
 				console.log('Grid-Control(ERROR): required argument GridStruct does not have a "colLayout" list of columns');
-				Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempt to create Grid control failed, the GridStruct argument needs to have a "colLayout" list of columns.', modal:false, width:400, height:300});
+				Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempt to create Grid control failed, the GridStruct argument needs to have a colLayout list of columns.', modal:false, width:400, height:300");
 			}
 			
 			return null;
@@ -150,8 +96,8 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         this._showDeleteButton = null;
         this.recordOffSet = (Framework.isEmpty(GridStruct.recordOffSet)) ? 5 : GridStruct.recordOffSet;
         this.resultPerShow = (Framework.isEmpty(GridStruct.resultPerShow)) ? 10 : GridStruct.resultPerShow;
-        this.listableServlet = (Framework.isEmpty(GridStruct.listableServlet)) ? callbackthisApp.prop.listableServlet : GridStruct.listableServlet;        
-        this.listableFunc = (Framework.isEmpty(GridStruct.listableFunc)) ? callbackthisApp.prop.listableFunc : GridStruct.listableFunc;        
+        this.listableServlet = (Framework.isEmpty(GridStruct.listableServlet)) ? callbackthisApp.listableServlet : GridStruct.listableServlet;        
+        this.listableFunc = (Framework.isEmpty(GridStruct.listableFunc)) ? callbackthisApp.listableFunc : GridStruct.listableFunc;        
 		this.tblHeaders = this.ColDetails._captionList; // array
 		this.tblDisplayHeaders = this.ColDetails._nameList; // array
 		this.tblContent = GridStruct.dataForBinding; //object
@@ -168,7 +114,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		this._thClassName = (Framework.isEmpty(GridStruct.styleTh)) ? "header" : GridStruct.styleTh;
         this._checkBox = (Framework.isEmpty(GridStruct.showCheckBox)) ? "" : GridStruct.showCheckBox;
         this._deleteButton = (Framework.isEmpty(GridStruct.deleteButton)) ? "" : GridStruct.deleteButton;    
-        var divObj = $(callbackthisApp.prop.hWnd + "#" + this._elementID );
+        var divObj = $("#" + this._elementID );
         var styleString = '';
 		
         if (!Framework.isEmpty(GridStruct.gridHeight)) {
@@ -192,7 +138,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         } 
                 
         if (!Framework.isEmpty(this._deleteButton)) {
-           this._tableHeaderColumnHTML +=  "<th class='_GridDeleteBox'> <div> &nbsp;<button class='btn btn-danger btn-xs' type='button'  disabled><i class='glyphicon glyphicon-remove'></i></button></div></th>"; 
+           this._tableHeaderColumnHTML +=  "<th class='_GridDeleteBox'> <div> &nbsp;<button class='btn btn-danger btn-xs' type='button'  disabled><i class='fa fa-times' aria-hidden='true'></i></button></div></th>"; 
         }
         
         this._tableHeaderColumnHTML += "</th>";
@@ -222,7 +168,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
                 } 
                 
                 if (!Framework.isEmpty(this._deleteButton)) {
-                    row += "<td class='_GridDeleteBox'><button class='btn btn-danger btn-xs' type='button'><i class='glyphicon glyphicon-remove'></i></button></td>"; 
+                    row += "<td class='_GridDeleteBox'><button class='btn btn-danger btn-xs' type='button'><i class='fa fa-times' aria-hidden='true'></i></button></td>"; 
                 }
                 
                 row += "</tr>";
@@ -231,7 +177,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		};
         
         this.HeaderCheckbox_OnClick = function() {
-            var table = $(callbackthisApp.prop.hWnd + "#" + this._elementID + " table");
+            var table = $( "#" + this._elementID + " table");
             var headercheckbox = table.find("tr td._GridCheckBox input[type=checkbox]");
 			var thisApp = this;
 			table.find("tr th._GridCheckBox").unbind();
@@ -269,7 +215,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		*/
         
         this.HeaderDeleteButton_OnClick = function() {
-            var table = $(callbackthisApp.prop.hWnd + "#" + this._elementID + " table");
+            var table = $("#" + this._elementID + " table");
             var headercheckbox = table.find("tr td._GridCheckBox input[type=checkbox]");
             var thisApp = this;
 			
@@ -304,7 +250,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
             } else {
                 if (Framework.prop.developer) {
                     console.log('Grid-Control(ERROR): required argument for ReturnCheckbox third arg is not correct syntax. third arg accept only two string such as: "data" or "number"');
-                    Framework.UI.MsgBox({title:'Grid Control Error', message:'required argument for ReturnCheckbox third arg is not correct syntax. third arg accept only two strings such as: "data" or "number"', modal:false, width:400, height:300});
+                    Framework.UI.MsgBox("title:'Grid Control Error', message:'required argument for ReturnCheckbox third arg is not correct syntax. third arg accept only two strings such as: data or number', modal:false, width:400, height:300");
                 }
             }
 		};
@@ -313,7 +259,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         this.ShowCheckbox = function(arg) {
             if (Framework.IsBoolean(arg)) {
                 this._showCheckbox = arg;
-                var table = $(callbackthisApp.prop.hWnd + "#" + this._elementID + " table");
+                var table = $("#" + this._elementID + " table");
                 if (arg) {
                    table.find("tr td._GridCheckBox").show();
                    table.find("tr th._GridCheckBox").show(); 
@@ -322,14 +268,14 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
                    table.find("tr th._GridCheckBox").hide(); 
                 }
             } else {
-                Framework.UI.MsgBox({title:'Grid Control Developer Error', message:'Attempt to fill Grid control failed, arg pass throw ShowCheckbox is not a boolean or null.', modal:false, width:400});
+                Framework.UI.MsgBox("title:'Grid Control Developer Error', message:'Attempt to fill Grid control failed, arg pass throw ShowCheckbox is not a boolean or null.', modal:false, width:400");
             }
         };
         
         this.ShowDeletebox = function(arg) {
             if (Framework.IsBoolean(arg)) {
                 this._showDeleteButton = arg;
-                var table = $(callbackthisApp.prop.hWnd + "#" +  this._elementID + " table");
+                var table = $("#" +  this._elementID + " table");
                 if (arg) {
                    table.find("tr td._GridDeleteBox").show();
                    table.find("tr th._GridDeleteBox").show(); 
@@ -338,17 +284,17 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
                    table.find("tr th._GridDeleteBox").hide(); 
                 }
             } else {
-                Framework.UI.MsgBox({title:'Grid Control Developer Error', message:'Attempt to fill Grid control failed, arg pass throw ShowCheckbox is not a boolean or null.', modal:false, width:400});
+                Framework.UI.MsgBox("title:'Grid Control Developer Error', message:'Attempt to fill Grid control failed, arg pass throw ShowCheckbox is not a boolean or null.', modal:false, width:400");
             }
         };
         
         this.AppendRows = function(tbldata) {		
-			var parent = $(callbackthisApp.prop.hWnd + "#" + this._elementID + " table:first-child");
+			var parent = $("#" + this._elementID + " table:first-child");
             
 			if (parent.length <= 0) {
                 if (Framework.prop.developer) {
                     console.log('Grid-Control(ERROR): Cannot append. App, or table in App does not exist');
-					Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300});
+					Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300");
                 }
 				
                 return null;
@@ -357,13 +303,13 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
         };
                 
 		this.BindOnClickEventToEachRow = function(elementID) {
-            var table = $(callbackthisApp.prop.hWnd + "#" + elementID + " table:first-child");
+            var table = $("#" + elementID + " table:first-child");
             var thisApp = callbackthisApp._grid[elementID];
 			
 			if (table.length <= 0) {
 				if (Framework.prop.developer) {
 					console.log('Grid-Control(ERROR): Cannot append. App, or table in App does not exist');
-					Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300});
+					Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300");
 				}
 				
 				return null;
@@ -399,12 +345,12 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		};
         
         this.BindOnDoubleClickEventToEachRow = function(elementID) {
-            var table = $(callbackthisApp.prop.hWnd + "#" + elementID + " table:first-child");
+            var table = $("#" + elementID + " table:first-child");
             var thisApp = callbackthisApp._grid[elementID];
 			if (table.length <= 0) {
 				if (Framework.prop.developer) {
 					console.log('Grid-Control(ERROR): Cannot append. App, or table in App does not exist');
-					Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300});
+					Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300");
 				}
 				
 				return null;
@@ -465,7 +411,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
                     this.setAttribute("class","GridRowsSelected");                    
                 }
 				
-                var table2 = $(callbackthisApp.prop.hWnd + "#" + elementID + " table");
+                var table2 = $("#" + elementID + " table");
                 var headercheckbox = table2.find("tr td._GridCheckBox input[type=checkbox]");
                 var checkedRow = thisApp.ReturnCheckbox(headercheckbox, true, "number");
 				
@@ -489,12 +435,12 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
             }
                      
             if (self.enableScrolling) {
-                var div = $(callbackthisApp.prop.hWnd + "#" + self._elementID + " div:first-child");
+                var div = $("#" + self._elementID );//+ " div:first-child");
 				
                 if (div.length <= 0) {
                     if (Framework.prop.developer) {
                         console.log('Grid-Control(ERROR): Cannot append. App, or table in App does not exist');
-                        Framework.UI.MsgBox({title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300});
+                        Framework.UI.MsgBox("title:'Grid Control Error', message:'Attempt to fill Grid control failed, The App, or the table in App does not exist.', modal:false, width:400, height:300");
                     }
                 } else {
                     div.on("scroll", ScrollNext);
@@ -512,9 +458,9 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 
                         if ((($(this).scrollTop() + $(this).innerHeight()) >= (this.scrollHeight - 10)) && (thisApp.enableScrolling)) {
                            // console.log("this is the resulPershow" + thisApp._nextDataCount);
-                            var api = new GetAPI(thisApp.listableServlet, thisApp.listableFunc, callbackthisApp, "callback_GetNextList", {"Start": thisApp._nextDataCount, "ResultPerShow": thisApp.resultPerShow});
-                            api.args = {"controlID": elementID };
-                            api.invoke();
+                            // var api = new Framework.API.getData(thisApp.listableServlet, thisApp.listableFunc, callbackthisApp, "callback_GetNextList", {"Start": thisApp._nextDataCount, "ResultPerShow": thisApp.resultPerShow});
+                            // api.args = {"controlID": elementID };
+                            // api.invoke();
 
                         }
                     }			
@@ -526,7 +472,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		* With all functions declared above, we *
 		* can now build and initialise the grid *
 		*****************************************/
-        $(callbackthisApp.prop.hWnd + "#" + this._elementID).addClass("gridContainer");
+        $("#" + this._elementID).addClass("gridContainer");
 		this._tableHeaderColumnHTML = "<thead><tr class='" + this._thClassName + "'>" + this._tableHeaderColumnHTML + "</tr></thead>";
         
 		//Add all new data into the DataStore (callbackthisApp.prop._storeData)
@@ -534,7 +480,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 		
 		this._row = this._BuildTableRows(this.tblContent);		
 		this._grid = "<div class='" + this._divClasName + "' id='" + this._divClasName + "'><div class='headerDiv'></div><div class='" + this.tblDivBK+ "'><table class='" +  this._tblClassName + "' name='GridTBL'>" +           this._tableHeaderColumnHTML + this._row + "</table></div></div>";
-		$(callbackthisApp.prop.hWnd + " #" + this._elementID).html(this._grid);
+		$(" #" + this._elementID).html(this._grid);
 		
 		  
         /****************************************
@@ -578,7 +524,7 @@ var Grid = function(GridStruct, callback_returnData, callbackthisApp) {
 	} catch (error) {
 		if (Framework.prop.developer) {
             console.log('An error occured: ' + error);
-			Framework.UI.MsgBox({title:'Grid Control Error',message:'An unexpected error occurred while trying to initialise the Grid Control.<br><br>ERROR:'+error ,modal:false,width:400,height:300});
+			Framework.UI.MsgBox("An unexpected error occurred while trying to initialise the Grid Control");
         }
 		
 		return null;
